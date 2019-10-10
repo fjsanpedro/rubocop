@@ -2133,6 +2133,7 @@ Security/Open:
   Enabled: true
   VersionAdded: '0.53'
   Safe: false
+  DisallowAll: false
 
 Security/YAMLLoad:
   Description: >-

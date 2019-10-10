@@ -23,12 +23,12 @@ module RuboCop
         MSG = 'The use of `Kernel#open` is a serious security risk.'
 
         def_node_matcher :open?, <<~PATTERN
-          (send nil? :open $!str ...)
+          (send {(const nil? :Kernel) nil?} :open $_ ...)
         PATTERN
 
         def on_send(node)
           open?(node) do |code|
-            return if safe?(code)
+            return if !disallow_all? && safe?(code)
 
             add_offense(node, location: :selector)
           end
@@ -63,7 +63,12 @@ module RuboCop
         end
 
         def concatenated_string?(node)
+
           node.send_type? && node.method?(:+) && node.receiver.str_type?
+        end
+
+        def disallow_all?
+          cop_config.fetch('DisallowAll', true)
         end
       end
     end
